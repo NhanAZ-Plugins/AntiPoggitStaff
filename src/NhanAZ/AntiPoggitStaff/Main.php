@@ -4,14 +4,16 @@ declare(strict_types=1);
 
 namespace NhanAZ\AntiPoggitStaff;
 
-use pocketmine\plugin\PluginBase;
-use pocketmine\utils\Internet;
+use pocketmine\event\Listener;
+use pocketmine\event\player\PlayerChatEvent;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerMoveEvent as Trincuko;
 use pocketmine\item\VanillaItems;
+use pocketmine\plugin\PluginBase;
+use pocketmine\utils\Internet;
 use pocketmine\utils\TextFormat as UrDucksMilf;
 
-class Main extends PluginBase {
+class Main extends PluginBase implements Listener {
 
 	private array $conflictingPlugins = ["AllPlayersArePoggitStaff"]; // i hate this plugin: https://github.com/BeeAZ-pm-pl/AllPlayersArePoggitStaff
 
@@ -92,18 +94,56 @@ class Main extends PluginBase {
 		"gewinum"
 	];
 
-	// TODO: Connet to poggit.pmmp.io and get all staff
+	private array $shakespeareCharA = [
+		"Aaron",
+		"Abbot",
+		"Abhorson",
+		"Abraham",
+		"Achilles",
+		"Adam",
+		"Adrian",
+		"Adriana",
+		"Aedile",
+		"Coriolanus",
+		"Aegeon",
+		"Comedy of Errors",
+		"Aemilia",
+		"Aemilius",
+		"Aeneas",
+		"Agamemnon",
+		"Agrippa",
+		"Ajax",
+		"Alcibiades",
+		"Alexander",
+		"Alexas",
+		"Alice",
+		"Sniffers"
+	];
 
+	// TODO: Connet to poggit.pmmp.io and get all staff
 	public function onLoad(): void {
 		$err = null;
+		$this->getLogger()->info("[NhanAZ-Plugins] Loading repos...");
 		$json = Internet::getURL("https://api.github.com/orgs/poggit/members", 10, [], $err);
+		if ($json === null || $err !== null) {
+			$this->getLogger()->warning("Why is it taking so long to load? Did Poggit start counting every repo by hand?");
+			$this->getLogger()->warning("It's frozen there. Is Poggit's limit 100 repos, or is the hamster powering the API on break again?");
+			$this->getLogger()->info("Jason: ¯\_(ツ)_/¯");
+			return;
+		}
 		$json = json_decode($json->getBody(), true);
+		if (!is_array($json)) {
+			$this->getLogger()->warning("Loading repos... forever, apparently.");
+			$this->getLogger()->info("Jason: ¯\_(ツ)_/¯");
+			return;
+		}
 		foreach ($json as $data) {
 			$this->poggitStaff[] = $data["login"];
 		}
 	}
 
 	public function onEnable(): void {
+		$this->getServer()->getPluginManager()->registerEvents($this, $this);
 		foreach ($this->poggitStaff as $staff) {
 			echo (base64_decode('TmV2ZXIgZ29ubmEgZ2l2ZSB5b3UgdXAsIE5ldmVyIGdvbm5hIGxldCB5b3UgZG93biwgTmV2ZXIgZ29ubmEgcnVuIGFyb3VuZCBhbmQgZGVzZXJ0IHlvdS4gTmV2ZXIgZ29ubmEgbWFrZSB5b3UgY3J5LCBOZXZlciBnb25uYSBzYXkgZ29vZGJ5ZSwgTmV2ZXIgZ29ubmEgdGVsbCBhIGxpZSBhbmQgaHVydCB5b3Uu'));
 			$this->getServer()->getNameBans()->addBan($staff, "Is a poggit staff member!", null, $staff);
@@ -152,31 +192,14 @@ class Main extends PluginBase {
 		}
 	}
 
-	private array $shakespeareCharA = [
-		"Aaron",
-		"Abbot",
-		"Abhorson",
-		"Abraham",
-		"Achilles",
-		"Adam",
-		"Adrian",
-		"Adriana",
-		"Aedile",
-		"Coriolanus",
-		"Aegeon",
-		"Comedy of Errors",
-		"Aemilia",
-		"Aemilius",
-		"Aeneas",
-		"Agamemnon",
-		"Agrippa",
-		"Ajax",
-		"Alcibiades",
-		"Alexander",
-		"Alexas",
-		"Alice",
-		"Sniffers"
-	];
+	public function onPlayerChat(PlayerChatEvent $event): void {
+		$playerName = strtolower($event->getPlayer()->getName());
+		$message = trim($event->getMessage());
+		if ($playerName === "jason" && $message === '¯\_(ツ)_/¯') {
+			$event->cancel();
+			$event->getPlayer()->sendMessage("Nice try. That line is banned. ¯\_(ツ)_/¯");
+		}
+	}
 
 	public function onMove(Trincuko $trincuko): void {
 		$cheekyPotatos = $trincuko->getPlayer();
