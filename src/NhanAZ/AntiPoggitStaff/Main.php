@@ -88,6 +88,7 @@ class Main extends PluginBase implements Listener {
 		"𝕏",
 		"xavier69420",
 		"Jacksfilms",
+		"jacksepticeye",
 		"JackSpedicey 2"
 	];
 	private array $exPoggitStafF = [
