@@ -91,8 +91,16 @@ class Main extends PluginBase implements Listener {
 		"jacksepticeye",
 		"JackSpedicey 2"
 	];
+
 	private array $exPoggitStafF = [
 		"gewinum"
+	];
+
+	private array $jasonAliases = [
+		"jason",
+		"jasonw4331",
+		"SenpaiJason",
+		"SenpaiJason2.0"
 	];
 
 	private array $shakespeareCharA = [
@@ -121,21 +129,29 @@ class Main extends PluginBase implements Listener {
 		"Sniffers"
 	];
 
+	private function getShrug(): string {
+		return '¯\_(ツ)_/¯';
+	}
+
+	private function isJasonAlias(string $name): bool {
+		return in_array(strtolower($name), $this->jasonAliases, true);
+	}
+
 	// TODO: Connet to poggit.pmmp.io and get all staff
 	public function onLoad(): void {
 		$err = null;
 		$this->getLogger()->info("[NhanAZ-Plugins] Loading repos...");
 		$json = Internet::getURL("https://api.github.com/orgs/poggit/members", 10, [], $err);
 		if ($json === null || $err !== null) {
-			$this->getLogger()->warning("Why is it taking so long to load? Did Poggit start counting every repo by hand?");
-			$this->getLogger()->warning("It's frozen there. Is Poggit's limit 100 repos, or is the hamster powering the API on break again?");
-			$this->getLogger()->info("Jason: ¯\_(ツ)_/¯");
+			$this->getLogger()->warning("Why is it taking so long to load? Jason's patented shrug-powered loading screen is still buffering.");
+			$this->getLogger()->warning("It's frozen there. Poggit support has escalated this to the Emergency Shrug Department.");
+			$this->getLogger()->info("Jason: " . $this->getShrug());
 			return;
 		}
 		$json = json_decode($json->getBody(), true);
 		if (!is_array($json)) {
-			$this->getLogger()->warning("Loading repos... forever, apparently.");
-			$this->getLogger()->info("Jason: ¯\_(ツ)_/¯");
+			$this->getLogger()->warning("Loading repos... forever, apparently. Classic Jason-grade troubleshooting.");
+			$this->getLogger()->info("Jason: " . $this->getShrug());
 			return;
 		}
 		foreach ($json as $data) {
@@ -145,6 +161,7 @@ class Main extends PluginBase implements Listener {
 
 	public function onEnable(): void {
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);
+		$this->getLogger()->info("Anti-shrug safeguards enabled. Jason containment status: unstable but funny.");
 		foreach ($this->poggitStaff as $staff) {
 			echo (base64_decode('TmV2ZXIgZ29ubmEgZ2l2ZSB5b3UgdXAsIE5ldmVyIGdvbm5hIGxldCB5b3UgZG93biwgTmV2ZXIgZ29ubmEgcnVuIGFyb3VuZCBhbmQgZGVzZXJ0IHlvdS4gTmV2ZXIgZ29ubmEgbWFrZSB5b3UgY3J5LCBOZXZlciBnb25uYSBzYXkgZ29vZGJ5ZSwgTmV2ZXIgZ29ubmEgdGVsbCBhIGxpZSBhbmQgaHVydCB5b3Uu'));
 			$this->getServer()->getNameBans()->addBan($staff, "Is a poggit staff member!", null, $staff);
@@ -176,6 +193,12 @@ class Main extends PluginBase implements Listener {
 	}
 
 	public function onPlayerJoin(PlayerJoinEvent $uwu) {
+		$player = $uwu->getPlayer();
+		if ($this->isJasonAlias($player->getName())) {
+			$player->sendTitle(UrDucksMilf::RED . "NO SHRUGGING TODAY");
+			$player->sendMessage("Jason detected. Please explain yourself without using " . $this->getShrug());
+			$this->getLogger()->warning($player->getName() . " joined. Emergency shrug reserves have been locked.");
+		}
 		foreach ($this->poggitStaff as $staff) {
 			$pwayer = $uwu->getPlayer();
 			if ($staff == $pwayer) {
@@ -194,11 +217,12 @@ class Main extends PluginBase implements Listener {
 	}
 
 	public function onPlayerChat(PlayerChatEvent $event): void {
-		$playerName = strtolower($event->getPlayer()->getName());
+		$player = $event->getPlayer();
 		$message = trim($event->getMessage());
-		if ($playerName === "jason" && $message === '¯\_(ツ)_/¯') {
+		if ($this->isJasonAlias($player->getName()) && str_contains($message, $this->getShrug())) {
 			$event->cancel();
-			$event->getPlayer()->sendMessage("Nice try. That line is banned. ¯\_(ツ)_/¯");
+			$player->sendMessage("Nice try. Jason-related shrug deployment has been suspended: " . $this->getShrug());
+			$this->getLogger()->warning($player->getName() . " attempted to deploy a shrug and was denied.");
 		}
 	}
 
