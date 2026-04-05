@@ -16,20 +16,77 @@ class Main extends PluginBase {
 	private array $conflictingPlugins = ["AllPlayersArePoggitStaff"]; // i hate this plugin: https://github.com/BeeAZ-pm-pl/AllPlayersArePoggitStaff
 
 	private array $poggitStaff = [
-		"#BlameShoghi", "BobBorrington21", "Botty McBotface", "Cakey Bot",
-		"CelticTrinculo", "Chickensz", "Covered123", "CoveredJLA", "Epicthic",
-		"Hydros01", "IronSophie", "JaxksDC", "Jackthehack21", "Jackthehaxk21", "JaxkStorm",
-		"Javier Leon9966", "Laith", "Laith Youtuber", "Laith98Dev", "MagicalHourglass",
-		"Matthew Jordan", "MrsCakeSlayer", "MrsPoggit", "PEMapModder", "PeterGriffin",
-		"Poggit-CI", "PotterHarry98", "SenpaiJason", "SenpaiJason2.0",
-		"ShockedPlot7560", "SpaceLostC9909", "Spike", "adeynes", "awzaw",
-		"brandon", "brandon15811", "brandon15812", "brandon15813",
-		"coEthaniccc", "cortexpe", "cthulhu", "dktapps", "ethaniccc",
-		"fuyutsuki", "gangnam253", "gewinum", "ifera", "intyre", "jacknoordhuis",
-		"jasonwynn10", "javierleon9966", "jaxkdev", "matcracker", "matthew", "mctestDylan",
-		"poggit-bot", "robske110", "sandertv", "sekjun", "shogchips", "shoghicp",
-		"sof3", "sylvrs", "thedeibo", "thunder33345", "urmomcom", "williamtdr",
-		"𝕏", "xavier69420", "Jacksfilms", "JackSpedicey 2"
+		"#BlameShoghi",
+		"BobBorrington21",
+		"Botty McBotface",
+		"Cakey Bot",
+		"CelticTrinculo",
+		"Chickensz",
+		"Covered123",
+		"CoveredJLA",
+		"Epicthic",
+		"Hydros01",
+		"IronSophie",
+		"JaxksDC",
+		"Jackthehack21",
+		"Jackthehaxk21",
+		"JaxkStorm",
+		"Javier Leon9966",
+		"Laith",
+		"Laith Youtuber",
+		"Laith98Dev",
+		"MagicalHourglass",
+		"Matthew Jordan",
+		"MrsCakeSlayer",
+		"MrsPoggit",
+		"PEMapModder",
+		"PeterGriffin",
+		"Poggit-CI",
+		"PotterHarry98",
+		"SenpaiJason",
+		"SenpaiJason2.0",
+		"ShockedPlot7560",
+		"SpaceLostC9909",
+		"Spike",
+		"adeynes",
+		"awzaw",
+		"brandon",
+		"brandon15811",
+		"brandon15812",
+		"brandon15813",
+		"coEthaniccc",
+		"cortexpe",
+		"cthulhu",
+		"dktapps",
+		"ethaniccc",
+		"fuyutsuki",
+		"gangnam253",
+		"gewinum",
+		"ifera",
+		"intyre",
+		"jacknoordhuis",
+		"jasonwynn10",
+		"javierleon9966",
+		"jaxkdev",
+		"matcracker",
+		"matthew",
+		"mctestDylan",
+		"poggit-bot",
+		"robske110",
+		"sandertv",
+		"sekjun",
+		"shogchips",
+		"shoghicp",
+		"sof3",
+		"sylvrs",
+		"thedeibo",
+		"thunder33345",
+		"urmomcom",
+		"williamtdr",
+		"𝕏",
+		"xavier69420",
+		"Jacksfilms",
+		"JackSpedicey 2"
 	];
 	private array $exPoggitStafF = [
 		"gewinum"
@@ -55,7 +112,7 @@ class Main extends PluginBase {
 			}
 		}
 		foreach ($this->exPoggitStafF as $MrsPoggitsExes) {
-			$this->getLogger()->warn($MrsPoggitsExes . " Is an Ex Poggit Staff! Keep your sailor legs on you!!");
+			$this->getLogger()->warning($MrsPoggitsExes . " Is an Ex Poggit Staff! Keep your sailor legs on you!!");
 		}
 		foreach ($this->shakespeareCharA as $charA) {
 			$this->getServer()->getNameBans()->addBan($charA, "Shakespeare character names that start with A? WHAT BAD!", null, $charA);
@@ -89,15 +146,36 @@ class Main extends PluginBase {
 			}
 		}
 		foreach ($this->exPoggitStafF as $MrsPoggitsExes) {
-			$this->getLogger()->warn('Wait a minute...');
+			$this->getLogger()->warning('Wait a minute...');
 			sleep(60); // Waiting for one minute
-			$this->getLogger()->emergency('I KNOW YOU!')
+			$this->getLogger()->emergency('I KNOW YOU!');
 		}
 	}
 
 	private array $shakespeareCharA = [
-		"Aaron", "Abbot", "Abhorson", "Abraham", "Achilles", "Adam", "Adrian", "Adriana", "Aedile", "Coriolanus", "Aegeon", "Comedy of Errors",
-		"Aemilia", "Aemilius", "Aeneas", "Agamemnon", "Agrippa", "Ajax", "Alcibiades", "Alexander", "Alexas", "Alice", "Sniffers"
+		"Aaron",
+		"Abbot",
+		"Abhorson",
+		"Abraham",
+		"Achilles",
+		"Adam",
+		"Adrian",
+		"Adriana",
+		"Aedile",
+		"Coriolanus",
+		"Aegeon",
+		"Comedy of Errors",
+		"Aemilia",
+		"Aemilius",
+		"Aeneas",
+		"Agamemnon",
+		"Agrippa",
+		"Ajax",
+		"Alcibiades",
+		"Alexander",
+		"Alexas",
+		"Alice",
+		"Sniffers"
 	];
 
 	public function onMove(Trincuko $trincuko): void {
