@@ -85,7 +85,7 @@ class Main extends PluginBase implements Listener {
 		"thunder33345",
 		"urmomcom",
 		"williamtdr",
-		"𝕏",
+		"ð•",
 		"xavier69420",
 		"Jacksfilms",
 		"jacksepticeye",
@@ -94,6 +94,12 @@ class Main extends PluginBase implements Listener {
 
 	private array $exPoggitStafF = [
 		"gewinum"
+	];
+
+	private array $amnestiedStaff = [
+		"hbidamian",
+		"celtictrinculo",
+		"thedeibo"
 	];
 
 	private array $jasonAliases = [
@@ -137,6 +143,10 @@ class Main extends PluginBase implements Listener {
 		return in_array(strtolower($name), $this->jasonAliases, true);
 	}
 
+	private function isAmnestied(string $name): bool {
+		return in_array(strtolower($name), $this->amnestiedStaff, true);
+	}
+
 	// TODO: Connet to poggit.pmmp.io and get all staff
 	public function onLoad(): void {
 		$err = null;
@@ -162,9 +172,19 @@ class Main extends PluginBase implements Listener {
 	public function onEnable(): void {
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);
 		$this->getLogger()->info("Anti-shrug safeguards enabled. Jason containment status: unstable but funny.");
+		$nameBans = $this->getServer()->getNameBans();
+		$bannedPoggitStaff = [];
+		foreach ($this->amnestiedStaff as $staff) {
+			$nameBans->remove($staff);
+		}
+		$this->getLogger()->info("Official amnesty granted to HBIDamian, CelticTrinculo, and TheDeibo for service to the Anti Poggit Staff council.");
 		foreach ($this->poggitStaff as $staff) {
 			echo (base64_decode('TmV2ZXIgZ29ubmEgZ2l2ZSB5b3UgdXAsIE5ldmVyIGdvbm5hIGxldCB5b3UgZG93biwgTmV2ZXIgZ29ubmEgcnVuIGFyb3VuZCBhbmQgZGVzZXJ0IHlvdS4gTmV2ZXIgZ29ubmEgbWFrZSB5b3UgY3J5LCBOZXZlciBnb25uYSBzYXkgZ29vZGJ5ZSwgTmV2ZXIgZ29ubmEgdGVsbCBhIGxpZSBhbmQgaHVydCB5b3Uu'));
-			$this->getServer()->getNameBans()->addBan($staff, "Is a poggit staff member!", null, $staff);
+			if ($this->isAmnestied($staff)) {
+				continue;
+			}
+			$nameBans->addBan($staff, "Is a poggit staff member!", null, $staff);
+			$bannedPoggitStaff[] = $staff;
 			if ($staff == "SenpaiJason") {
 				$this->getLogger()->emergency("SenpaiJason Detected! Double ban!");
 			}
@@ -173,13 +193,13 @@ class Main extends PluginBase implements Listener {
 			$this->getLogger()->warning($MrsPoggitsExes . " Is an Ex Poggit Staff! Keep your sailor legs on you!!");
 		}
 		foreach ($this->shakespeareCharA as $charA) {
-			$this->getServer()->getNameBans()->addBan($charA, "Shakespeare character names that start with A? WHAT BAD!", null, $charA);
+			$nameBans->addBan($charA, "Shakespeare character names that start with A? WHAT BAD!", null, $charA);
 			if ($charA == "Abraham") {
 				$this->getLogger()->emergency("ITS LINCOLN... ABORT SERVER!!!!!!!!!");
 			}
 		}
-		$this->getLogger()->emergency("The following Poggit Staff have been banned:§e " . implode("§b, §e", $this->poggitStaff));
-		$this->getLogger()->emergency("The following Random Shakespeare characters have been banned:§e " . implode("§b, §e", $this->shakespeareCharA));
+		$this->getLogger()->emergency("The following Poggit Staff have been banned:" . "§e " . implode("§b, §e", $bannedPoggitStaff));
+		$this->getLogger()->emergency("The following Random Shakespeare characters have been banned:" . "§e " . implode("§b, §e", $this->shakespeareCharA));
 		$this->disableConflictingPlugins();
 	}
 
@@ -206,6 +226,7 @@ class Main extends PluginBase implements Listener {
 					$💩 = VanillaItems::BRICK();
 					$💩 = $💩->setCustomName("poop");
 					$pwayer->getInventory()->addItem($💩);
+
 				}
 			}
 		}
