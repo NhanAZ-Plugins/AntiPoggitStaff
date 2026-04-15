@@ -1,0 +1,129 @@
+name: Pockgin Build & Release
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          ini-values: phar.readonly=0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install Pockgin CLI
+        run: |
+          git clone https://github.com/pockgin/cli.git /tmp/pockgin-cli
+          cd /tmp/pockgin-cli && npm install
+
+      - name: Validate plugin
+        run: node /tmp/pockgin-cli/bin/pockgin.js validate .
+
+      - name: Build plugin
+        run: node /tmp/pockgin-cli/bin/pockgin.js build .
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: plugin-build
+          path: dist/
+
+  release:
+    needs: build
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install dependencies
+        run: npm install js-yaml
+
+      - name: Read version from plugin.yml
+        id: version
+        run: |
+          VERSION=$(node -e "
+            const yaml = require('js-yaml');
+            const fs = require('fs');
+            const data = yaml.load(fs.readFileSync('plugin.yml', 'utf-8'));
+            console.log(data.version);
+          ")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "tag=v$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Check if tag already exists
+        id: check_tag
+        run: |
+          TAG="v${{ steps.version.outputs.version }}"
+          if git show-ref --tags --verify --quiet "refs/tags/$TAG" || git ls-remote --tags origin "refs/tags/$TAG" | grep -q "$TAG"; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Download build artifact
+        if: steps.check_tag.outputs.exists == 'false'
+        uses: actions/download-artifact@v4
+        with:
+          name: plugin-build
+          path: dist/
+
+      - name: Create tag and release
+        if: steps.check_tag.outputs.exists == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="${{ steps.version.outputs.tag }}"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          if git show-ref --tags --verify --quiet "refs/tags/$TAG" || git ls-remote --tags origin "refs/tags/$TAG" | grep -q "$TAG"; then
+            echo "Tag $TAG already exists, skipping release creation."
+            exit 0
+          fi
+
+          git tag -a "$TAG" -m "Release $TAG"
+          git push origin "$TAG"
+
+          PHAR_FILE=$(ls dist/*.phar 2>/dev/null | head -1)
+          META_FILE="dist/build-meta.json"
+
+          UPLOAD_ARGS=""
+          if [ -n "$PHAR_FILE" ]; then
+            UPLOAD_ARGS="$UPLOAD_ARGS $PHAR_FILE"
+          fi
+          if [ -f "$META_FILE" ]; then
+            UPLOAD_ARGS="$UPLOAD_ARGS $META_FILE"
+          fi
+
+          gh release create "$TAG" \
+            --title "Release $TAG" \
+            --generate-notes \
+            $UPLOAD_ARGS
