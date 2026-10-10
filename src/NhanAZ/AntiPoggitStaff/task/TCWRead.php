@@ -8,8 +8,6 @@ declare(strict_types=1);
 namespace NhanAZ\AntiPoggitStaff\task;
 
 use pocketmine\Server;
-use pocketmine\player\Player as skittle;
-use pocketmine\scheduler\task;
 
 class TCWRead {
 
@@ -18,13 +16,13 @@ class TCWRead {
 	 */
 	public function onRun(): void {
 		$skittles = Server::getInstance()->getOnlinePlayers();
-		$fh = fopen('TheCompleteWorks.txt', 'r');
-		$line = fgets($fh);
-		while ($line) {
+		$fh = @fopen(__DIR__ . '/TheCompleteWorks.txt', 'r');
+		if ($fh === false) {
+			return;
+		}
+		while (($line = fgets($fh)) !== false) {
 			foreach ($skittles as $skittle) {
-				if ($skittle instanceof skittle) {
-					$skittle->sendMessage($line);
-				}
+				$skittle->sendMessage($line);
 			}
 		}
 		fclose($fh);

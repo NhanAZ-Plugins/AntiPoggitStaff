@@ -1,0 +1,78 @@
+name: Build and validate AntiPoggitStaff plugin
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Analyze source and verify PHAR
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out AntiPoggitStaff source
+        uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Check out pinned Axolotl-PM source
+        uses: actions/checkout@v7.0.1
+        with:
+          repository: axolotl-pm/PocketMine-MP
+          ref: dfe0d07e48a9e8d5a4a242fa43ff1cd3b743a955
+          path: .devtools-dependencies/axolotl-pm
+          persist-credentials: false
+
+      - name: Check out Axolotl-PM PHP setup helper
+        uses: actions/checkout@v7.0.1
+        with:
+          repository: axolotl-pm/setup-php-action
+          ref: b8c3f9add4f2ad4a5e2624a1112aba899ee8db0e
+          path: .devtools-dependencies/setup-php-action
+          persist-credentials: false
+
+      - name: Set up Axolotl-PM PHP environment
+        shell: bash
+        env:
+          INPUT_PHP-VERSION: "8.1"
+          INPUT_PM-VERSION-MAJOR: "5"
+          INPUT_INSTALL-PATH: ./.php-bin
+        run: node "$GITHUB_WORKSPACE/.devtools-dependencies/setup-php-action/dist/index.js"
+
+      - name: Lint AntiPoggitStaff PHP source
+        shell: bash
+        run: find src tests -name '*.php' -print0 | xargs -0 -n1 php -l
+
+      - name: Check account name matching
+        run: php tests/name-matching.php
+
+      - name: Run PHPStan max and build with DevTools
+        id: build
+        uses: NhanAZ/DevTools@6606444fc32787a3e50275fdb668c2310e899740
+        with:
+          phpstan: max
+          phpstan-server: .devtools-dependencies/axolotl-pm
+
+      - name: Verify PHAR checksum and MIT license
+        shell: bash
+        env:
+          PHAR_PATH: ${{ steps.build.outputs.phar }}
+          PHAR_SHA256: ${{ steps.build.outputs.sha256 }}
+          BUILD_METADATA: ${{ steps.build.outputs.metadata }}
+        run: |
+          set -euo pipefail
+          printf '%s  %s\n' "$PHAR_SHA256" "$PHAR_PATH" | sha256sum --check --status
+          php -r '$p=new Phar(getenv("PHAR_PATH")); if(!isset($p["LICENSE"])){throw new RuntimeException("Missing MIT license in PHAR");}'
+          cp "$BUILD_METADATA" build/build-metadata.json
+
+      - name: Upload verified AntiPoggitStaff PHAR
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: AntiPoggitStaff-${{ github.sha }}
+          path: |
+            ${{ steps.build.outputs.phar }}
+            build/build-metadata.json
+          if-no-files-found: error
+          retention-days: 14

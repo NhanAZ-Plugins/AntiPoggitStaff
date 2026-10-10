@@ -10,13 +10,17 @@ use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerMoveEvent as Trincuko;
 use pocketmine\item\VanillaItems;
 use pocketmine\plugin\PluginBase;
+use pocketmine\scheduler\ClosureTask;
 use pocketmine\utils\Internet;
 use pocketmine\utils\TextFormat as UrDucksMilf;
+use WeakMap;
 
 class Main extends PluginBase implements Listener {
 
+	/** @var list<string> */
 	private array $conflictingPlugins = ["AllPlayersArePoggitStaff"]; // i hate this plugin: https://github.com/BeeAZ-pm-pl/AllPlayersArePoggitStaff
 
+	/** @var list<string> */
 	private array $poggitStaff = [
 		"adeynes",
 		"awzaw",
@@ -92,16 +96,19 @@ class Main extends PluginBase implements Listener {
 		"#BlameShoghi",
 	];
 
+	/** @var list<string> */
 	private array $exPoggitStafF = [
 		"gewinum"
 	];
 
+	/** @var list<string> */
 	private array $amnestiedStaff = [
 		"hbidamian",
 		"celtictrinculo",
 		"thedeibo"
 	];
 
+	/** @var list<string> */
 	private array $jasonAliases = [
 		"jason",
 		"jasonw4331",
@@ -109,6 +116,7 @@ class Main extends PluginBase implements Listener {
 		"SenpaiJason2.0"
 	];
 
+	/** @var list<string> */
 	private array $shakespeareCharA = [
 		"Aaron",
 		"Abbot",
@@ -135,12 +143,20 @@ class Main extends PluginBase implements Listener {
 		"Sniffers"
 	];
 
+	/** @var WeakMap<\pocketmine\player\Player, bool> */
+	private WeakMap $moveNotified;
+
 	private function getShrug(): string {
 		return '¯\_(ツ)_/¯';
 	}
 
 	private function isJasonAlias(string $name): bool {
-		return in_array(strtolower($name), $this->jasonAliases, true);
+		foreach ($this->jasonAliases as $alias) {
+			if (strcasecmp($name, $alias) === 0) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private function isAmnestied(string $name): bool {
@@ -149,6 +165,7 @@ class Main extends PluginBase implements Listener {
 
 	// TODO: Connet to poggit.pmmp.io and get all staff
 	public function onLoad(): void {
+		$this->moveNotified = new WeakMap();
 		$err = null;
 		$this->getLogger()->info("[NhanAZ-Plugins] Loading repos...");
 		$json = Internet::getURL("https://api.github.com/orgs/poggit/members", 10, [], $err);
@@ -165,7 +182,9 @@ class Main extends PluginBase implements Listener {
 			return;
 		}
 		foreach ($json as $data) {
-			$this->poggitStaff[] = $data["login"];
+			if (is_array($data) && isset($data["login"]) && is_string($data["login"])) {
+				$this->poggitStaff[] = $data["login"];
+			}
 		}
 	}
 
@@ -179,7 +198,6 @@ class Main extends PluginBase implements Listener {
 		}
 		$this->getLogger()->info("Official amnesty granted to HBIDamian, CelticTrinculo, and TheDeibo for service to the Anti Poggit Staff council.");
 		foreach ($this->poggitStaff as $staff) {
-			echo (base64_decode('TmV2ZXIgZ29ubmEgZ2l2ZSB5b3UgdXAsIE5ldmVyIGdvbm5hIGxldCB5b3UgZG93biwgTmV2ZXIgZ29ubmEgcnVuIGFyb3VuZCBhbmQgZGVzZXJ0IHlvdS4gTmV2ZXIgZ29ubmEgbWFrZSB5b3UgY3J5LCBOZXZlciBnb25uYSBzYXkgZ29vZGJ5ZSwgTmV2ZXIgZ29ubmEgdGVsbCBhIGxpZSBhbmQgaHVydCB5b3Uu'));
 			if ($this->isAmnestied($staff)) {
 				continue;
 			}
@@ -203,16 +221,17 @@ class Main extends PluginBase implements Listener {
 		$this->disableConflictingPlugins();
 	}
 
-	private function disableConflictingPlugins() {
+	private function disableConflictingPlugins(): void {
 		foreach ($this->conflictingPlugins as $conflictingPlugin) {
-			if ($this->getServer()->getPluginManager()->getPlugin($conflictingPlugin) !== null) {
-				$this->getServer()->getPluginManager()->disablePlugin($this->getServer()->getPluginManager()->getPlugin($conflictingPlugin));
+			$plugin = $this->getServer()->getPluginManager()->getPlugin($conflictingPlugin);
+			if ($plugin !== null) {
+				$this->getServer()->getPluginManager()->disablePlugin($plugin);
 				$this->getLogger()->emergency("§cThe plugin §e" . $conflictingPlugin . "§c is conflicting with this plugin. Just disabled it!");
 			}
 		}
 	}
 
-	public function onPlayerJoin(PlayerJoinEvent $uwu) {
+	public function onPlayerJoin(PlayerJoinEvent $uwu): void {
 		$player = $uwu->getPlayer();
 		if ($this->isJasonAlias($player->getName())) {
 			$player->sendTitle(UrDucksMilf::RED . "NO SHRUGGING TODAY");
@@ -220,19 +239,22 @@ class Main extends PluginBase implements Listener {
 			$this->getLogger()->warning($player->getName() . " joined. Emergency shrug reserves have been locked.");
 		}
 		foreach ($this->poggitStaff as $staff) {
-			$pwayer = $uwu->getPlayer();
-			if ($staff == $pwayer) {
-				if ($pwayer === $staff) {
-					$💩 = VanillaItems::BRICK();
-					$💩 = $💩->setCustomName("poop");
-					$pwayer->getInventory()->addItem($💩);
-				}
+			if (strcasecmp($staff, $player->getName()) === 0) {
+				$brick = VanillaItems::BRICK()->setCustomName("poop");
+				$player->getInventory()->addItem($brick);
+				break;
 			}
 		}
 		foreach ($this->exPoggitStafF as $MrsPoggitsExes) {
-			$this->getLogger()->warning('Wait a minute...');
-			sleep(60); // Waiting for one minute
-			$this->getLogger()->emergency('I KNOW YOU!');
+			if (strcasecmp($MrsPoggitsExes, $player->getName()) === 0) {
+				$this->getLogger()->warning('Wait a minute...');
+				$this->getScheduler()->scheduleDelayedTask(new ClosureTask(function () use ($player): void {
+					if ($player->isOnline()) {
+						$this->getLogger()->emergency('I KNOW YOU!');
+					}
+				}), 20 * 60);
+				break;
+			}
 		}
 	}
 
@@ -248,6 +270,10 @@ class Main extends PluginBase implements Listener {
 
 	public function onMove(Trincuko $trincuko): void {
 		$cheekyPotatos = $trincuko->getPlayer();
+		if (isset($this->moveNotified[$cheekyPotatos])) {
+			return;
+		}
+		$this->moveNotified[$cheekyPotatos] = true;
 		$whoPotat = $cheekyPotatos->getDisplayName();
 		$cheekyPotatos->sendTitle(UrDucksMilf::GOLD . "Get wrecked!");
 		//
