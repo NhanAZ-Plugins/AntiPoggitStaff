@@ -68,7 +68,7 @@ jobs:
           cp "$BUILD_METADATA" build/build-metadata.json
 
       - name: Upload verified AntiPoggitStaff PHAR
-        uses: actions/upload-artifact@v7.0.2
+        uses: actions/upload-artifact@v7
         with:
           name: AntiPoggitStaff-${{ github.sha }}
           path: |
