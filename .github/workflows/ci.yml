@@ -13,12 +13,12 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Check out AntiPoggitStaff source
-        uses: actions/checkout@v7.0.1
+        uses: actions/checkout@v7
         with:
           persist-credentials: false
 
       - name: Check out pinned Axolotl-PM source
-        uses: actions/checkout@v7.0.1
+        uses: actions/checkout@v7
         with:
           repository: axolotl-pm/PocketMine-MP
           ref: dfe0d07e48a9e8d5a4a242fa43ff1cd3b743a955
@@ -26,7 +26,7 @@ jobs:
           persist-credentials: false
 
       - name: Check out Axolotl-PM PHP setup helper
-        uses: actions/checkout@v7.0.1
+        uses: actions/checkout@v7
         with:
           repository: axolotl-pm/setup-php-action
           ref: b8c3f9add4f2ad4a5e2624a1112aba899ee8db0e
