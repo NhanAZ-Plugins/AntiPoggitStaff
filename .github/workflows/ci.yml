@@ -13,12 +13,12 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Check out AntiPoggitStaff source
-        uses: actions/checkout@v7.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
       - name: Check out pinned Axolotl-PM source
-        uses: actions/checkout@v7.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: axolotl-pm/PocketMine-MP
           ref: dfe0d07e48a9e8d5a4a242fa43ff1cd3b743a955
@@ -26,7 +26,7 @@ jobs:
           persist-credentials: false
 
       - name: Check out Axolotl-PM PHP setup helper
-        uses: actions/checkout@v7.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: axolotl-pm/setup-php-action
           ref: b8c3f9add4f2ad4a5e2624a1112aba899ee8db0e
@@ -50,7 +50,7 @@ jobs:
 
       - name: Run PHPStan max and build with DevTools
         id: build
-        uses: NhanAZ/DevTools@6606444fc32787a3e50275fdb668c2310e899740
+        uses: NhanAZ/DevTools@8d13a75aaf4f330fdbd93737d58be9cacc41e262 # v1.0.15
         with:
           phpstan: max
           phpstan-server: .devtools-dependencies/axolotl-pm
@@ -68,7 +68,7 @@ jobs:
           cp "$BUILD_METADATA" build/build-metadata.json
 
       - name: Upload verified AntiPoggitStaff PHAR
-        uses: actions/upload-artifact@v7.0.2
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: AntiPoggitStaff-${{ github.sha }}
           path: |
