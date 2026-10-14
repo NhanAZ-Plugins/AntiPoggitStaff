@@ -50,7 +50,7 @@ jobs:
 
       - name: Run PHPStan max and build with DevTools
         id: build
-        uses: NhanAZ/DevTools@6606444fc32787a3e50275fdb668c2310e899740
+        uses: NhanAZ/DevTools@f89c929de25ea5e45418b8caeb688db77d97c2f6
         with:
           phpstan: max
           phpstan-server: .devtools-dependencies/axolotl-pm
