@@ -7,7 +7,7 @@ A satire plugin for Axolotl-PM that adds names from a built-in list and the publ
 
 ## Requirements and compatibility
 
-The manifest declares Axolotl-PM API `5.0.0`. PHPStan at maximum level passes against the 5.0.0 and 5.49.1 source revisions. The [build workflow](.github/workflows/ci.yml) pins the exact server source for repeatable checks. Runtime startup has been tested on 5.49.1, but intermediate releases and connected player behavior are not verified.
+The manifest declares Axolotl-PM API `5.0.0`. PHPStan at maximum level passes against the 5.0.0 and 5.51.1 source revisions. The [build workflow](.github/workflows/ci.yml) pins the exact server source for repeatable checks. Runtime startup has been tested on 5.51.1, but intermediate releases and connected player behavior are not verified.
 
 ## Installation and behavior
 

@@ -21,7 +21,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: axolotl-pm/PocketMine-MP
-          ref: dfe0d07e48a9e8d5a4a242fa43ff1cd3b743a955
+          ref: e881fc1bc1c401545baf6bd1f824e41ff3f57bd1
           path: .devtools-dependencies/axolotl-pm
           persist-credentials: false
 
@@ -50,7 +50,7 @@ jobs:
 
       - name: Run PHPStan max and build with DevTools
         id: build
-        uses: NhanAZ/DevTools@8d13a75aaf4f330fdbd93737d58be9cacc41e262 # v1.0.15
+        uses: NhanAZ/DevTools@v2 # v2
         with:
           phpstan: max
           phpstan-server: .devtools-dependencies/axolotl-pm
