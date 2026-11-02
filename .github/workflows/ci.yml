@@ -75,4 +75,3 @@ jobs:
             ${{ steps.build.outputs.phar }}
             build/build-metadata.json
           if-no-files-found: error
-          retention-days: 14
