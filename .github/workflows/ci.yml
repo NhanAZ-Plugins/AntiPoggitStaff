@@ -36,7 +36,7 @@ jobs:
       - name: Set up Axolotl-PM PHP environment
         shell: bash
         env:
-          INPUT_PHP-VERSION: "8.1"
+          INPUT_PHP-VERSION: "8.4"
           INPUT_PM-VERSION-MAJOR: "5"
           INPUT_INSTALL-PATH: ./.php-bin
         run: node "$GITHUB_WORKSPACE/.devtools-dependencies/setup-php-action/dist/index.js"
