@@ -33,3 +33,8 @@ php -d phar.readonly=0 path/to/DevTools/bin/devtools.php build --project=. --jso
 ## License and support
 
 AntiPoggitStaff is MIT licensed. Report issues in this repository or contact [NhanAZ Discord](https://discord.gg/j2X83ujT6c).
+
+
+## Credits
+
+Authors: NhanAZ.
