@@ -3,4 +3,5 @@ name: AntiPoggitStaff
 version: 1.0.1
 main: NhanAZ\AntiPoggitStaff\Main
 api: 5.0.0
+authors: ["NhanAZ"]
 ...
