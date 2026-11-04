@@ -1,9 +1,15 @@
 # AntiPoggitStaff
 
-A satire plugin for Axolotl-PM that adds names from a built-in list and the public Poggit organization member API to the server's name ban list. It also reacts to selected player names and chat messages. Read [the longer satire](SATIRICAL-README.md) for the original tone of the project.
+Satirical Axolotl-PM plugin that updates the name ban list and reacts to player names
 
-> [!WARNING]
-> Enabling this plugin changes the server's persistent name ban list. It bans the listed accounts and several fictional names on startup, and removes bans for three amnestied names. Install it only on a server where those changes are intended. Back up `banned-players.txt` before installation.
+[![CI](https://github.com/NhanAZ-Plugins/AntiPoggitStaff/actions/workflows/ci.yml/badge.svg)](https://github.com/NhanAZ-Plugins/AntiPoggitStaff/actions/workflows/ci.yml)
+[![Latest release](https://img.shields.io/github/v/release/NhanAZ-Plugins/AntiPoggitStaff)](https://github.com/NhanAZ-Plugins/AntiPoggitStaff/releases/latest)
+[![License](https://img.shields.io/github/license/NhanAZ-Plugins/AntiPoggitStaff)](https://github.com/NhanAZ-Plugins/AntiPoggitStaff/blob/master/LICENSE)
+[![Discord](https://img.shields.io/discord/986553214889517088?label=Discord&logo=discord&logoColor=white&color=5865F2)](https://discord.gg/j2X83ujT6c)
+
+## Overview
+
+This plugin targets the PocketMine-MP and Axolotl-PM API 5 ecosystem and is maintained under [NhanAZ-Plugins](https://github.com/NhanAZ-Plugins).
 
 ## Requirements and compatibility
 
